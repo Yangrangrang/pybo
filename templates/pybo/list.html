@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta  name="viewport" content="width=device-width,initial-scale=1.0">
+    {% load static %}   <!-- css,js, images 로딩 최상단에 위치 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!--  bootstrap  -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+
+    <title>Title</title>
+
+</head>
+<body>
+ <!--
+    <ul>
+≈    {% if question_list %}
+        {% for question in question_list %}
+            {# http://127.0.0.1:8000/pybo/1 #}
+            <li><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a>,{{question.create_date|date:"Y-m-d"}}</li>
+        {% endfor %}
+    {% else %}
+        <p>질문이 없습니다.</p>
+    {% endif %}
+    </ul>
+    {% csrf_token %}
+-->
+    <!--container -->
+    <div class="container">
+        <!-- 제목 -->
+        <div class="text-start mb-5">
+            <h2>질문목록</h2>
+        </div>
+        <!-- 제목 end -->
+        <!-- 검색, 버튼 -->
+        <div class="d-grid gap-2 d-md-flex justify-content-end">
+            <!-- 검색 form -->
+            <form action="#" class="col-sm-11 col-md-11 col-la-11 text-end">
+                <select class="form-select-sm" >
+                  <option selected value="">전체</option>
+                  <option value="10">제목</option>
+                  <option value="20">내용</option>
+                  <option value="30">작성자</option>
+                </select>
+                <input type="text" class="form-control-sm" placeholder="검색어">
+                <select class="form-select-sm">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </form>
+            <!-- 검색 form end -->
+
+            <!-- button -->
+            <div class="col-sm-1 col-md-1 col-la-1 text-end">
+                <input type="button" class="btn btn-outline-primary btn-sm" value="조회">
+                <input type="button" class="btn btn-primary btn-sm" value="등록">
+            </div>
+            <!-- button end -->
+        </div>
+        <!-- 검색, 버튼 end -->
+
+        <!--table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered table-sm">
+              <thead>
+                <tr class="table-dark text-center">
+                  <th scope="col">No.</th>
+                  <th scope="col">제목</th>
+                  <th scope="col">작성자</th>
+                  <th scope="col">작성일</th>
+                  <th scope="col">조회수</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for question in question_list %}
+                <tr>
+                  <td class="text-center">{{question.id}}</td>
+                  <td class="text-start">{{question.subject}}</td>
+                  <td class="text-center">작성자</td>
+                  <td class="text-center">작성일</td>
+                  <td class="text-end">1</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+        <!--table end-->
+        <!-- pagging -->
+        <div class="d-grid gap-2 d-md-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- pagging end-->
+    </div>
+    <!--container end -->
+</body>
+</html>
