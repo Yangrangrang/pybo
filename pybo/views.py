@@ -1,14 +1,15 @@
 from django.shortcuts import render,get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.utils import timezone
 from .models import Question
-from .forms import QuestionFrom
+from .forms import QuestionFrom, AnswerFrom
+import logging
 
 def question_create(request):
     '''질문 등록'''
-    print('request.method:{}'.format(request.method))
+    logging.info('request.method:{}'.format(request.method))
     if request.method == 'POST':
-        # print('question_create post')
+        # logging.info('question_create post')
         # 저장
         form = QuestionFrom(request.POST)   # request.POST 데이터 (subject,content 자동 생성)
         if form.is_valid(): # form(질문등록)이 유효하면
@@ -35,21 +36,39 @@ def boot_list(request):
     return render(request, 'pybo/list.html')
 
 def answer_create(request,question_id):
-    print('answer_create:{}'.format(question_id))
+    '''답변등록'''
+
+    logging.info('1.answer_create:{}'.format(question_id))
     question = get_object_or_404(Question, pk=question_id)
+
+    if request.method == 'POST':
+        form = AnswerFrom(request.POST)
+        if form.is_valid():
+            logging.info('2.answer_create:{}'.format(question_id))
+            answer = form.save(commit=False)    # content만 저장 (commit은 하지 않음)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()   # 최종 저장
+            return redirect('pybo:detail', question_id=question.id)
+    else :
+        return HttpResponseNotAllowed('Post만 가능 합니다.')
+
+    # form validation
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
+
     # Question과 Answer 처럼 서로 연결되어 있는 경우
     # 연결 모델명 _set 연결데이터를 조회할 수 있다.
-
-    question.answer_set.create(content=request.POST.get('content'), create_date=timezone.now())
-    return redirect('pybo:detail',question_id=question.id)
+    # question.answer_set.create(content=request.POST.get('content'), create_date=timezone.now())
+    # return redirect('pybo:detail',question_id=question.id)
 
 def detail(request,question_id):
     '''question 상세'''
-    print('1.question_id:{}'.format(question_id))
+    logging.info('1.question_id:{}'.format(question_id))
     # question = Question.objects.get(id=question_id)
     question = get_object_or_404(Question, pk=question_id)
 
-    print('2.question:{}'.format(question))
+    logging.info('2.question:{}'.format(question))
     context = {'question':question}
     return render(request, 'pybo/question_detail.html', context)
 
@@ -58,10 +77,11 @@ def index(request):
     # return HttpResponse('Hello pybo에요')
     '''question 목록'''
     # list order create_date desc
-    print('index 레벨로 출력')
+    logging.info('index 레벨로 출력')
+    # logging.info('index 레벨로 출력')
     question_list = Question.objects.order_by('create_date')    # order_by('-필드') desc, asc order_by('필드')
     # question_list =Question.objects.filter(id=99)
     context = {'question_list':question_list}
-    print('question_list:{}'.format(question_list))
+    logging.info('question_list:{}'.format(question_list))
     return render(request, 'pybo/question_list.html', context)
 
