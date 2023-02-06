@@ -11,10 +11,12 @@ from urllib.request import urlopen
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
+import pyperclip
+from selenium.webdriver.common.keys import Keys     #ctrl+C ctrl+V
 
 # ---------------------------------------------
-from pybo.models import Question
-from django.utils import timezone
+# from pybo.models import Question
+# from django.utils import timezone
 
 '''
 for i in range(500):
@@ -25,8 +27,37 @@ for i in range(500):
 # ---------------------------------------------
 
 
+
 class Crawling(unittest.TestCase):
 
+    def test_clipboard_naver(self):
+        '''clipboard를 통한 naver login'''
+        self.brower.get('https://nid.naver.com/nidlogin.login?mode=form&url=https%3A%2F%2Fwww.naver.com')
+        user_id = '아이디'
+        user_pw = '비번'
+
+        # id
+        id_textinput = self.brower.find_element(By.ID,'id')
+        id_textinput.click()
+        # 클립보드로 copy
+        pyperclip.copy(user_id)
+        id_textinput.send_keys(Keys.COMMAND,'v')    #클립보드에서 id_textinput 으로 copy
+        time.sleep(1)
+
+        # password
+        pw_textinput = self.brower.find_element(By.ID,'pw')
+        pw_textinput.click()
+        pyperclip.copy(user_pw)
+        pw_textinput.send_keys(Keys.COMMAND,'v')
+        time.sleep(1)
+
+        # 로그인버튼
+        btn_login = self.brower.find_element(By.ID,'log.login')
+        btn_login.click()
+
+        pass
+
+    @unittest.skip('test_naver')
     def test_naver(self):
         self.brower.get('https://nid.naver.com/nidlogin.login?mode=form&url=https%3A%2F%2Fwww.naver.com')
 
@@ -49,6 +80,7 @@ class Crawling(unittest.TestCase):
         print('tearDown')
         # self.brower.quit()    # webdriver 종료
 
+    @unittest.skip('test_selenium')
     def test_selenium(self):
         # 파이어폭스 웹 드라이버 객체에게 Get을 통하여 네이버의 http요청을 하게 함.
         self.brower.get('http://127.0.0.1:8000/pybo/9/')
