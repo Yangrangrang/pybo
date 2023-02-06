@@ -131,6 +131,7 @@ def index(request):
     logging.info('page:{}'.format(page))
 
     question_list = Question.objects.order_by('create_date')    # order_by('-필드') desc, asc order_by('필드')
+
     # paging
     paginator = Paginator(question_list, 10)
     page_obj = paginator.get_page(page)
