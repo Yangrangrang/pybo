@@ -19,6 +19,7 @@
                 <tr class="table-dark text-center">
                     <th scope="col">No.</th>
                     <th scope="col">제목</th>
+                    <th scope="col">글쓴이</th>
                     <th scope="col">작성일</th>
                 </tr>
             </thead>
@@ -34,6 +35,7 @@
                             <span class="text-danger small mx-2">{{question.answer_set.count}}</span>
                         {% endif %}
                     </td>
+                    <td class="text-center">{{ question.author.username }}</td>     <!--글쓴이-->
                     <td class="text-center">{{ question.create_date|date:"Y-m-d" }}</td>
                 </tr>
                 {% endfor %}
