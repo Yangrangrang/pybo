@@ -14,12 +14,20 @@ app_name='pybo'
 
 urlpatterns = [
     path('', views.index,name='index'),   #views의 index함수로 메핑
-    path('<int:question_id>/',views.detail,name='detail'),
+
+    # answer
     path('answer/create/<int:question_id>/',views.answer_create,name='answer_create'),
+    #answer_modify
+    path('answer/modify/<int:answer_id>/', views.answer_modify, name='answer_modify'),
+    #answer_delete
+    path('answer/delete/<int:answer_id>/', views.answer_delete, name='answer_delete'),
+
+    # pybo:detail
+    path('<int:question_id>/',views.detail,name='detail'),
+    # pybo:question_create
     path('question/create/',views.question_create,name='question_create'),
     #pybo:question_modify
     path('question/modify/<int:question_id>/', views.question_modify, name='question_modify'),
-
     #pybo:question_delete
     path('question/delete/<int:question_id>/', views.question_delete, name='question_delete'),
 
