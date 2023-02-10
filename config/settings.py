@@ -173,16 +173,22 @@ LOGGING = {
         },
     },
     'loggers': {
+        #sql
+        'django.db.backends': {
+            'handlers': ['file','console'],
+            'propagate': False,
+            'level': 'INFO',
+        },
         #종류
         'django.server': {
             'handlers': ['file','console'],
             'propagate': False,
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         'django.request': {
             'handlers':['file','console'],
             'propagate': False,
-            'level':'DEBUG',
+            'level':'INFO',
         },
         '': {
             'level': 'DEBUG',

@@ -15,6 +15,20 @@ from django.utils import timezone
 from ..forms import QuestionFrom
 from ..models import Question
 #ctrl + alt + o(alpa): import정리
+@login_required(login_url='common:login')
+def question_vote(request,question_id):
+    '''질문: 좋아요'''
+    logging.info('1. question_vote question_id:{}'.format(question_id))
+    question = get_object_or_404(Question, pk=question_id)
+
+    #본인글은 추천 하지 못하게
+    if request.user == question.author:
+        messages.error(request, '본인이 작성한 글은 추천 할 수 없습니다.')
+    else:
+        question.voter.add(request.user)
+
+    return redirect('pybo:detail', question_id=question.id)
+    pass
 
 
 @login_required(login_url='common:login')

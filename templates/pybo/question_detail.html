@@ -1,5 +1,6 @@
 
     {% extends 'base.html' %}
+    {% load pybo_filter %}
     {% block content%}
     <!-- container -->
     <div class="container">
@@ -22,7 +23,7 @@
             </div>
             {% endif %}
             <!--message 표시 end-->
-            <div class="card-text" style="white-space pre-line;">{{question.content}}</div>
+            <div class="card-text">{{question.content|mark }}</div>
             <div class="d-flex justify-content-end">
             <!--수정자, 수정일-->
                 {% if question.modify_date%}
@@ -43,6 +44,12 @@
             </div>
             <!--질문 수정-->
             <div class="my-3">
+                <!--좋아요-->
+                <a href="javascript:void(0);" data-uri="{% url 'pybo:question_vote' question.id %}" class="recommend btn btn-outline-secondary btn-sm">
+                    좋아요
+                    <span class="badge rounded-pill bg-success">{{question.voter.count}}</span>
+                </a>
+
                 {% if question.author == request.user %}    <!--글쓴이와 로그인한 사용자가 동일 하면-->
                 <a href="{% url 'pybo:question_modify' question.id %}" class="btn btn-outline-secondary btn-sm">수정</a>
                 <a href="javascript:void(0);" data-uri="{% url 'pybo:question_delete' question.id %}" class="delete btn btn-outline-secondary btn-sm">삭제</a>
@@ -77,11 +84,17 @@
                 </div>
             </div>
             <div class="my-3">
+                <a href="javascript:void(0);" data-uri="{% url 'pybo:answer_vote' answer.id %}" class="recommend btn btn-outline-secondary btn-sm">
+                    좋아요
+                    <span class="badge rounded-pill bg-success">{{answer.voter.count}}</span>
+                </a>
+
+                {% if request.user == answer.author %}<!--본인 글만 수정 삭제-->
                 <a href="{% url 'pybo:answer_modify' answer.id %}" class="btn btn-outline-secondary btn-sm">수정</a>
                 <a href="{% url 'pybo:answer_delete' answer.id %}" class="delete btn btn-outline-secondary btn-sm"
                     data-uri="{% url 'pybo:answer_delete' answer.id %}"
                 >삭제</a>
-
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -133,22 +146,21 @@
                 });
             });
 
+            // question: 좋아요
+
+            const recommend_elements = document.querySelectorAll(".recommend");
+
+            Array.from(recommend_elements).forEach(function(element){
+                element.addEventListener('click',function(){
+                    console.log('recommend click');
+                    if(confirm('좋아요 하시겠습니까?')){
+                        console.log('this.dataset.uri'+this.dataset.uri)
+                        location.href = this.dataset.uri;
+                    }
+                });
+            });
 
 
-            function doSave(){
-                <!--console.log('doSave');-->
-                let frm =document.answer_frm;
-                let content = frm.content.value;
-                console.log('content'+content);
-                if(isEmpty(content) == true){
-                    alert('내용을 입력 하세요');
-                    frm.content.focus();
-                    return ;
-                }
-
-                //서버로 전송
-                frm.submit();
-            }
 
         </script>
     {% endblock %}
