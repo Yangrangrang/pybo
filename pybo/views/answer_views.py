@@ -9,7 +9,7 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 
 from ..forms import AnswerFrom
@@ -26,8 +26,8 @@ def answer_vote(request, answer_id):
     else:
         answer.voter.add(request.user)
 
-    return redirect('pybo:detail', question_id=answer.question.id)
-
+    # return redirect('pybo:detail', question_id=answer.question.id)
+    return redirect('{}#answer_{}'.format(resolve_url('pybo:detail', question_id=answer.question.id), answer.id))
 
 @login_required(login_url='common:login')   # 로그인이 되어있지 않으면 login 페이지로 이동
 def answer_create(request, question_id):
@@ -48,7 +48,8 @@ def answer_create(request, question_id):
             logging.info('answer.author:{}'.format(answer.author))
 
             answer.save()   # 최종 저장
-            return redirect('pybo:detail', question_id=question.id)
+            # return redirect('pybo:detail', question_id=question.id)
+            return redirect('{}#answer_{}'.format(resolve_url('pybo:detail',question_id=question.id),answer.id))
     else :
         form = AnswerFrom()
 
@@ -88,7 +89,9 @@ def answer_modify(request, answer_id):
             answer.modify_date = timezone.now()
             answer.save()
             # 수정 화면
-            return redirect('pybo:detail', question_id=answer.question.id)
+            # return redirect('pybo:detail', question_id=answer.question.id)
+            return redirect('{}#answer_{}'.format(resolve_url('pybo:detail',question_id=answer.question.id),answer.id))
+
     else:                           # 수정 template
         form = AnswerFrom(instance=answer)
 
@@ -109,4 +112,5 @@ def answer_delete(request, answer_id):
         answer.delete()
 
     return redirect('pybo:detail', question_id=answer.question_id)
+
 

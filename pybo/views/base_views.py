@@ -34,12 +34,30 @@ def index(request):
 
     # 입력 인자
     page = request.GET.get('page','1') # 페이지
+    kw = request.GET.get('kw','')   # 페이지
+    div = request.GET.get('div', '')  # 검색어구분
+    size = request.GET.get('size', '10')  # 페이지 사이즈
     logging.info('page:{}'.format(page))
+    logging.info('kw:{}'.format(kw))
+    logging.info('div:{}'.format(div))
+    logging.info('size:{}'.format(size))
 
-    question_list = Question.objects.order_by('create_date')    # order_by('-필드') desc, asc order_by('필드')
+    question_list = Question.objects.order_by('-create_date')    # order_by('-필드') desc, asc order_by('필드')
+    # subject__contains : 사용 __contains 또는 __icontains(대소문자 구분) :
+    if '10' == div:
+        logging.info('if 10')
+        question_list = question_list.filter(subject__contains=kw)
+    elif '20' == div:
+        logging.info('if 20')
+        question_list = question_list.filter(content__contains=kw)
+    elif '30' == div:
+        logging.info('if 30')
+        # 포린키 관례 : author'__'username
+        # author = models.ForeignKey(User, on_delete=models.CASCADE,related_name='author_question')
+        question_list = question_list.filter(author__username__contains=kw)
 
     # paging
-    paginator = Paginator(question_list, 10)
+    paginator = Paginator(question_list, size)
     page_obj = paginator.get_page(page)
 
     # paginator.count : 전체 게시물 개수
@@ -55,7 +73,7 @@ def index(request):
 
 
     # question_list =Question.objects.filter(id=99)
-    context = {'question_list': page_obj}
+    context = {'question_list': page_obj, 'kw': kw, 'page': page, 'div': div, 'size':size}
     logging.info('question_list:{}'.format(page_obj))
 
     return render(request, 'pybo/question_list.html', context)
