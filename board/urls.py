@@ -5,7 +5,7 @@ app_name = 'board'
 
 urlpatterns = [
     #view
-    path('', base_views.index, name='index'),
+    path('', base_views.index, name='board_index'),
     path('<int:board_id>/',base_views.detail,name='detail'),
 
     path('board/create/', board_views.board_create, name='board_create'),
